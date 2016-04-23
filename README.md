@@ -2,8 +2,39 @@
 This is a light weight encryption algorithm. This is particularly useful for IoT devices. 
 
 The Cipher has 16 rounds.
-
 One round of Cipher has essentially three stages:
+
+# Usage 
+This is a beta version. 
+
+SIGNALLERS CIPHER
+-------------------
+Developed By:
+a. Ajay Fuloria
+b. Anirudh Agarwal
+
+1. Instructions to execute code :
+----------------------------------
+The main program is "signallers.c". It can be executed from linux command line as follows
+
+$ gcc signallers.c
+$ ./a.out
+
+sample output on execution of above commands
+
+SIGNALLERS CIPHER 
+----------------- 
+Choose your option
+a. Encrypt a file.
+b. Decrypt a file.
+### : 
+
+On the program prompt (###) enter your choice. 'a' for encrypting a file and 'b' for decrypting a encrypted file. 
+On pressing 'a' you will be prompted for file name. Output will be as follows:
+
+Enter the file name (with full path) : 
+Here enter the full path of the file. If file is in the same folder then just type the file name with extension (if extension is present) Same procedure is followed for decryption also.
+
 # • Confusion Layer. 
 Confusion is provided by using 8 identical S Boxes in a layer . Each S Box is 4 x 4 straight type which maps 4 bit input to 4 bit output bits as shown below. The mapping of 32 bit block to output is based on four non linear functions. 
 
