@@ -7,14 +7,12 @@ One round of Cipher has essentially three stages:
 # Usage 
 This is a beta version. 
 
-SIGNALLERS CIPHER
--------------------
 Developed By:
 a. Ajay Fuloria
 b. Anirudh Agarwal
 
-1. Instructions to execute code :
-----------------------------------
+Instructions to execute code :
+--------------------------------
 The main program is "signallers.c". It can be executed from linux command line as follows
 
 $ gcc signallers.c
