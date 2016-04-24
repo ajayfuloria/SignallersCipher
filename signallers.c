@@ -106,8 +106,8 @@ int keyGenerator(int key, int round){
 		return key;
 
 }
-void encrypt(){
-	int key = 3517373009;
+void encrypt(k){
+	int key = k;
 	char inputBuff[5];
 	char ch;
 	int x = -1;
@@ -187,8 +187,8 @@ void encrypt(){
 
 }
 
-void decrypt(){
-	int key = 3517373009;
+void decrypt(k){
+	int key = k;
 	char inputBuff[5];
 	char ch;
 	int x = -1;
@@ -265,6 +265,7 @@ void decrypt(){
 		fclose(fw);
 }
 int main( int argc, char ** argv ) {
+	int k;
 	char choice = ' ';
 	printf("SIGNALLERS CIPHER \n");
 	printf("----------------- \n");
@@ -274,13 +275,16 @@ int main( int argc, char ** argv ) {
 	printf("### : ");
 	fflush(stdout);
 	scanf("%c",&choice);
+	printf("Enter the key : ");
+	fflush(stdout);
+	scanf("%d",&k);
 	switch(choice){
 
-	case 'a' 	:	encrypt();
+	case 'a' 	:	encrypt(k);
 
 					break;
 
-	case 'b'	:	decrypt();
+	case 'b'	:	decrypt(k);
 					break;
 
 
