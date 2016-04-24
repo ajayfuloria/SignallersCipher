@@ -1,8 +1,4 @@
 #include <stdio.h>
-#include <time.h>
-clock_t begin, end;
-double time_spent;
-
 int slookup[16] = {0,8,9,15,12,11,10,3,6,4,1,13,7,14,5,2};
 int permuteLookup[32]={6,9,28,12,23,18,1,25,15,16,27,4,31,2,8,21,3,26,7,14,22,11,29,19,10,0,30,17,20,5,24,13};
 
@@ -16,12 +12,15 @@ int convertStringToNum(char * x){
 	for(h = 0; h < 4; h ++){
 		temp = x[h];
 		out[h] = out[h] | temp;
+//		printf("---%d : %02X",h, out[h]);
 		out[h] = out[h] << 24;
 		out[h] = out[h] >> (8*h);
+//		printf("---%d : %02X",h, out[h]);
 
 	}
 
 	result = out[0]|out[1] | out[2]| out[3];
+//	printf("---res : %02X",result);
 
 	return result;
 }
@@ -33,12 +32,18 @@ int convertStringToNumdecrypt(char * x){
 	for(h = 0; h < 4; h ++){
 		temp = x[h];
 		out[h] = out[h] | temp;
+//		printf("---%d : %02X",h, out[h]);
 		out[h] = out[h] << 24;
 		out[h] = out[h] >> (8*h);
 
+//		printf("---%d : %02X",h, out[h]);
+		if(out[h] == 255){
+			out[h] = 0;
+		}
 	}
 
 	result = out[0]|out[1] | out[2]| out[3];
+//	printf("---res : %02X",result);
 
 	return result;
 }
@@ -77,9 +82,14 @@ int inverseper(int x){
 	return a;
 }
 int roundfunc(int stateVal, int key_round){
-		stateVal = sBoxLookup(stateVal);//
+		stateVal = sBoxLookup(stateVal);
+//		printf("\n The hex value after 1st round Sbox lookup is : %X", stateVal);
+//		printf("\n The dec value after 1st round Sbox lookup is : %d", stateVal);
+//
 
 		stateVal = per(stateVal);
+//		printf("\n hex value after 1st round permutation is : %X", stateVal);
+//		printf("\n dec value after 1st round permutation is : %d", stateVal);
 
 		stateVal = stateVal ^ key_round;
 
@@ -91,8 +101,12 @@ int revroundfunc(int stateVal, int key_round){
 
 
 		stateVal = inverseper(stateVal);
+//		printf("\n hex value after 1st round permutation is : %X", stateVal);
+//		printf("\n dec value after 1st round permutation is : %d", stateVal);
 
 		stateVal = inversesBoxLookup(stateVal);
+//		printf("\n The hex value after 1st round Sbox lookup is : %X", stateVal);
+//		printf("\n The dec value after 1st round Sbox lookup is : %d", stateVal);
 
 
 
@@ -106,8 +120,9 @@ int keyGenerator(int key, int round){
 		return key;
 
 }
-void encrypt(int k){
+void encrypt(k){
 	int key = k;
+	//int key = 3517373009;
 	char inputBuff[5];
 	char ch;
 	int x = -1;
@@ -116,11 +131,10 @@ void encrypt(int k){
 	char path[50] = {'\0'};
 	char newpath[50]= {'\0'};
 
-		char encry[5] = {'e','n','c','_','\0'};
+		char encry[8] = {'e','n','c','r','y','p','t','\0'};
 		printf("Enter the file name (with full path) : ");
 		fflush(stdout);
 		scanf("%s", &path);
-		begin =clock();
 		FILE *fr;
 		FILE *fw;
 		fr = fopen(path, "a+");
@@ -136,21 +150,22 @@ void encrypt(int k){
 				fseek(fr, 0L, SEEK_SET);
 				fseek(fr, 0L, SEEK_END);
 				sz = ftell(fr);
-		for(h=0;h<4;h++){
-			newpath[h] = encry[h];
-		}
-		
 		for(h = 0; h < 50; h++){
 			if(path[h]!='\0'){
-				newpath[h+4] = path[h];
+				newpath[h] = path[h];
+				index = h;
 			}
+		}
+		for(h=0;h<8;h++){
+			newpath[index+1+h] = encry[h];
 		}
 		fw = fopen(newpath, "a+");
 
+		printf("\n Size of file is :: %d",sz);
 		fseek(fr, 0L, SEEK_SET);
-		while(!feof(fr)) { //(ch =  getc(fr)) != EOF){
+		while((ch =  getc(fr)) != EOF){ //!feof(fr)) { //
 			x+=1;
-			ch = getc(fr);
+			//ch = getc(fr);
 			inputBuff[x] = ch;
 			if(x==3){
 			inputBuff[4] = '\0';
@@ -164,7 +179,7 @@ void encrypt(int k){
 			stateVal = sBoxLookup(stateVal);
 			int kround = keyGenerator(key, 16);
 			stateVal = stateVal ^ kround;
-			unsigned char finalWrite[5] ={'\0'};
+			char finalWrite[5] ={'\0'};
 			for(h=0;h<4;h++){
 				int temp = stateVal;
 				temp = temp >> (24 - 8*h);
@@ -174,20 +189,17 @@ void encrypt(int k){
 				}else{
 					finalWrite[h] = (char)temp;
 				}
-				
 			}
 			fwrite(finalWrite, 1, sizeof(finalWrite)-1, fw);
 			}
 			}
 		fclose(fr);
 		fclose(fw);
-		end = clock();
-		time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-		printf("\nTime taken for encryption : %f\n", time_spent);
 
 }
 
 void decrypt(int k){
+	//int key = 3517373009;
 	int key = k;
 	char inputBuff[5];
 	char ch;
@@ -197,7 +209,7 @@ void decrypt(int k){
 	char path[50] = {'\0'};
 	char newpath[50]= {'\0'};
 
-		char decry[5] = {'d','e','c','_','\0'};
+		char decry[8] = {'d','e','c','r','y','p','t','\0'};
 		printf("Enter the file name (with full path) : ");
 		fflush(stdout);
 		scanf("%s", &path);
@@ -205,17 +217,19 @@ void decrypt(int k){
 		FILE *fw;
 
 		fr = fopen(path, "r");
-		for(h=0;h<4;h++){
-			newpath[h] = decry[h];
-		}
-		for(h = 4; h < 50; h++){
+
+		for(h = 0; h < 50; h++){
 			if(path[h]!='\0'){
 				newpath[h] = path[h];
+				index = h;
 
 			}
 		}
-		
+		for(h=0;h<8;h++){
+			newpath[index+1+h] = decry[h];
+		}
 		fw = fopen(newpath, "w");
+		//printf("reached in whikel");
 		while(!feof(fr)){ //(ch =  getc(fr)) != EOF){
 			x+=1;
 			ch =  getc(fr);
@@ -224,10 +238,18 @@ void decrypt(int k){
 			if(x==3){
 			inputBuff[4] = '\0';
 
-			x = -1;
-			
-			stateVal = convertStringToNumdecrypt(inputBuff);
+			//printf("%s", inputBuff);
 
+			//printf(": : %02X :: ", inputBuff);
+			x = -1;
+
+			stateVal = convertStringToNumdecrypt(inputBuff);
+			//printf("\n The hexa for input this is : %X", stateVal);
+			//printf("\n %d",stateVal);
+
+			//stateVal = stateVal^key;
+			//printf("\n The hex value after key whitening is : %X", stateVal);
+		//	printf("\n The dec value after key whitening is : %d",stateVal);
 
 			int kround = keyGenerator(key, 16);
 			stateVal = stateVal ^ kround;
@@ -241,10 +263,10 @@ void decrypt(int k){
 
 			stateVal = stateVal ^ key;
 
-		
+//			printf("\n The final decyption is hex :  %X", stateVal);
+//			printf("\n The final decyption is : %d",stateVal);
 
-
-			unsigned char finalWrite[5] ={'\0'};
+			char finalWrite[5] ={'\0'};
 			for(h=0;h<4;h++){
 
 				int temp = stateVal;
@@ -255,12 +277,15 @@ void decrypt(int k){
 				}else{
 					finalWrite[h] = (char)temp;
 				}
+				//printf("%c",finalWrite[h]);
 
 			}
-			fwrite(finalWrite,1,sizeof(finalWrite)-1,fw);
+
+			fprintf(fw,"%s",finalWrite);
 			}
 
 			}
+		//printf("%c",out[9]);
 		fclose(fr);
 		fclose(fw);
 }
