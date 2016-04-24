@@ -106,7 +106,7 @@ int keyGenerator(int key, int round){
 		return key;
 
 }
-void encrypt(k){
+void encrypt(int k){
 	int key = k;
 	char inputBuff[5];
 	char ch;
@@ -187,7 +187,7 @@ void encrypt(k){
 
 }
 
-void decrypt(k){
+void decrypt(int k){
 	int key = k;
 	char inputBuff[5];
 	char ch;
